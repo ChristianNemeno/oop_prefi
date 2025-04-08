@@ -57,7 +57,22 @@ public class Login {
 
     public void switchToDashboard(ActionEvent event){
         try {
-            FXMLLoader loader = new FXMLLoader(Todo.class.getResource("dashboard.fxml"));
+            FXMLLoader loader = new FXMLLoader(Todo.class.getResource("dashboard_student.fxml"));
+            Parent root = loader.load();
+
+
+            Stage stage = (Stage)(((Node)event.getSource()).getScene().getWindow());
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+    public void switchToDashboardTeacher(ActionEvent event){
+        try {
+            FXMLLoader loader = new FXMLLoader(Todo.class.getResource("dashboard_teacher.fxml"));
             Parent root = loader.load();
 
 
@@ -92,12 +107,13 @@ public class Login {
 
 
 
-        int id = dbAccess.authenticate(usernameTF.getText(), passwordTF.getText());
+        user_data wat = dbAccess.authenticate(usernameTF.getText(), passwordTF.getText());
+        if(wat != null){
 
-        acc_id track = acc_id.getInstance();
-        track.setId(id);
+            acc_id track = acc_id.getInstance();
+            track.setId(wat.id);
 
-        if(id > -1){
+
             System.out.println("there exists");
             try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("creds.txt"))){
                 userData = new user_credentials(user, password);
@@ -106,12 +122,19 @@ public class Login {
             }catch(IOException e){
                 System.err.println(e);
             }
+            if(wat.usertype == 1){
+                switchToDashboard(event);
+            }else if(wat.usertype == 2){
+                switchToDashboardTeacher(event);
+            }
 
-            switchToDashboard(event);
-        }else {
+
+
+        }else{
             errorLabel.setVisible(true);
-
         }
+
+
 
     }
 }

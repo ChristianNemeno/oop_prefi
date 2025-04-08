@@ -14,11 +14,12 @@ public class DAO {
     public static final String PASSWORD = "";
 
 
-    public int authenticate(String user, String password){
-        int id = -1;
+    public user_data authenticate(String user, String password){
+        //int id = -1;
+        user_data inLoginData = null;
         try(Connection conn = DriverManager.getConnection(URL,USER, PASSWORD);
             PreparedStatement statement = conn.prepareStatement(
-                    "SELECT id FROM user WHERE username =? AND password =?"
+                    "SELECT id,usertype_id FROM user WHERE username =? AND password =?"
             );
         ){
 
@@ -28,7 +29,8 @@ public class DAO {
             ResultSet rs = statement.executeQuery();
 
             if(rs.next()){
-                id = rs.getInt("id");
+                inLoginData = new user_data(rs.getInt("usertype_id"),rs.getInt("id"));
+
 
             }
 
@@ -36,7 +38,7 @@ public class DAO {
             System.err.println(e);
         }
 
-        return id;
+        return inLoginData;
     }
 
     public user_data getter(int id){
@@ -64,7 +66,6 @@ public class DAO {
         }catch (SQLException e){
             System.err.println(e);
         }
-
         return usd;
     }
 
@@ -102,6 +103,38 @@ public class DAO {
         return studs;
     }
 
+
+
+    public ObservableList<teacher_data> teacherInterface(int teacher_id){
+        ObservableList<teacher_data> teachs = FXCollections.observableArrayList();
+        String query = "SELECT code as coursecode, name as coursename " +
+                "FROM subject " +
+                "WHERE teacher_id = ?";
+        try(Connection conn = DriverManager.getConnection(URL,USER, PASSWORD);
+            PreparedStatement statement = conn.prepareStatement(query)
+        ){
+
+            statement.setInt(1, teacher_id);
+
+
+            ResultSet resultSet = statement.executeQuery();
+
+
+            while(resultSet.next()){
+                String c_code = resultSet.getString("coursecode");
+                String c_name = resultSet.getString("coursename");
+
+                teachs.add(new teacher_data(c_code,c_name));
+            }
+
+
+
+        }catch (SQLException e){
+            System.err.println(e);
+        }
+
+        return teachs;
+    }
 
 
 

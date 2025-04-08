@@ -15,25 +15,45 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
 
-public class dashboard {
-    public TableView<student_data> tblView;
-    public TableColumn<student_data, String > coursecode_col;
-    public TableColumn<student_data, String> coursename_col;
-    public TableColumn<student_data, Double> grade_col;
+public class dashboard_teacher {
+
+
+    public TableView<teacher_data> tblView;
+    public TableColumn<teacher_data, String> coursecode_col;
+    public TableColumn<teacher_data, String> coursename_col;
+    public TableColumn<teacher_data , Button> grade_col;
     public Button logoutBtn;
     public TextField tfName;
 
-
-
-
     DAO db = new DAO();
-
-
 
     public void initialize(){
         coursecode_col.setCellValueFactory(new PropertyValueFactory<>("courseCode"));
         coursename_col.setCellValueFactory(new PropertyValueFactory<>("courseName"));
-        grade_col.setCellValueFactory(new PropertyValueFactory<>("grade"));
+
+        grade_col.setCellFactory(col -> {
+            return new TableCell<teacher_data, Button>() {
+                private final Button gradeButton = new Button("Grade");
+
+                {
+                    gradeButton.setOnAction(event -> {
+                        //teacher_data data = getTableView().getItems().get(getIndex());
+
+                    });
+                }
+
+                @Override
+                protected void updateItem(Button item, boolean empty) {
+                    super.updateItem(item, empty);
+
+                    if (empty) {
+                        setGraphic(null);
+                    } else {
+                        setGraphic(gradeButton);
+                    }
+                }
+            };
+        });
 
         String[] csv;
         acc_id track = acc_id.getInstance();
@@ -43,14 +63,24 @@ public class dashboard {
             tfName.setText(usd.toString());
             csv = usd.toString().trim().split(",");
 
-            ObservableList<student_data> xx = FXCollections.observableArrayList();
-            xx = db.studentInterface(csv[0],csv[1]);
+            ObservableList<teacher_data> xx = FXCollections.observableArrayList();
+            xx = db.teacherInterface(acc_id.getInstance().getId());
 
             tblView.setItems(xx);
         }
 
 
+
     }
+
+
+
+
+
+
+
+
+
 
 
     public void onLogoutClicked(ActionEvent event) {
@@ -78,8 +108,5 @@ public class dashboard {
             throw new RuntimeException(e);
         }
     }
-
-
-
 
 }
