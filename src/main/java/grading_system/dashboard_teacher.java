@@ -72,6 +72,22 @@ public class dashboard_teacher {
 
 
     }
+//
+//    SELECT
+//    u.lastname,
+//    u.firstname,
+//    g.score
+//            FROM
+//    user u
+//    INNER JOIN
+//    grade g ON u.id = g.student_id
+//    INNER JOIN
+//    subject s ON g.subject_id = s.id
+//            WHERE
+//    s.teacher_id = [teacher_id] <- the id
+//    AND u.usertype_id = 1
+//    ORDER BY
+//    u.lastname, u.firstname;
 
 
 
