@@ -20,6 +20,6 @@
       <Button fx:id="logoutBtn" layoutX="511.0" layoutY="41.0" mnemonicParsing="false" onAction="#onLogoutClicked" text="Logout" />
       <Label layoutX="150.0" layoutY="66.0" text="Name:" />
       <TextField fx:id="tfName" layoutX="200.0" layoutY="62.0" prefHeight="25.0" prefWidth="89.0" />
-      <Button fx:id="okBtn" layoutX="300.0" layoutY="62.0" mnemonicParsing="false" onAction="#onOkClicked" text="OK" />
+
    </children>
 </AnchorPane>

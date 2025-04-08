@@ -1,5 +1,6 @@
 package grading_system;
 
+import com.example.prefi.Todo;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -12,8 +13,6 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.io.*;
-import java.sql.SQLException;
-import java.util.Objects;
 
 public class Login {
     public Button signinBtn;
@@ -22,12 +21,15 @@ public class Login {
     public Label usernameLabel;
     public Label passwordLabel;
     public Label errorLabel;
-    private user_data userData;
+    private user_credentials userData;
     DAO dbAccess = new DAO();
+
+
+
 
     public void initialize(){
         try(ObjectInputStream ois = new ObjectInputStream(new FileInputStream("creds.txt"))){
-            userData = (user_data) ois.readObject();
+            userData = (user_credentials) ois.readObject();
             usernameTF.setText(userData.getUsername());
             passwordTF.setText(userData.getPassword());
 
@@ -36,7 +38,9 @@ public class Login {
 
         }catch (IOException e){
             System.err.println(e);
+            System.out.println("huhu");
         } catch (ClassNotFoundException e) {
+            System.out.println("huhu");
             throw new RuntimeException(e);
         }
 
@@ -53,11 +57,14 @@ public class Login {
 
     public void switchToDashboard(ActionEvent event){
         try {
-            System.out.println("SADASD");
+            FXMLLoader loader = new FXMLLoader(Todo.class.getResource("dashboard.fxml"));
+            Parent root = loader.load();
+
+
             Stage stage = (Stage)(((Node)event.getSource()).getScene().getWindow());
-            Parent root = FXMLLoader.load(getClass().getResource("/com/example/prefi/dashboard.fxml"));
             Scene scene = new Scene(root);
             stage.setScene(scene);
+            stage.show();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -69,6 +76,8 @@ public class Login {
     public void onSigninClicked(ActionEvent event) {
         // authenticate
         // serialized if successful
+
+
         String user = usernameTF.getText();
         String password = passwordTF.getText();
 
@@ -85,10 +94,13 @@ public class Login {
 
         int id = dbAccess.authenticate(usernameTF.getText(), passwordTF.getText());
 
+        acc_id track = acc_id.getInstance();
+        track.setId(id);
+
         if(id > -1){
             System.out.println("there exists");
             try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("creds.txt"))){
-                userData = new user_data(user, password);
+                userData = new user_credentials(user, password);
                 oos.writeObject(userData);
 
             }catch(IOException e){

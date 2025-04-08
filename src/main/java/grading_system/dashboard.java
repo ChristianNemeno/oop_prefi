@@ -4,6 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 public class dashboard {
     public TableView<student_data> tblView;
@@ -15,27 +16,38 @@ public class dashboard {
     public TextField tfName;
 
 
+
+
     DAO db = new DAO();
 
+
+
     public void initialize(){
-        tfName.setEditable(false);
-
-        tfName.setText("Sad");
-
-
+        coursecode_col.setCellValueFactory(new PropertyValueFactory<>("courseCode"));
+        coursename_col.setCellValueFactory(new PropertyValueFactory<>("courseName"));
+        grade_col.setCellValueFactory(new PropertyValueFactory<>("grade"));
         String[] csv;
-        String out = tfName.getText();
-        csv = out.trim().split(",");
+        acc_id track = acc_id.getInstance();
 
-        ObservableList<student_data> xx = FXCollections.observableArrayList();
-        xx = db.studentInterface(csv[0],csv[1]);
+        if(track.getId() > 0){
+            user_data usd = db.getter(track.getId());
+            tfName.setText(usd.toString());
+            csv = usd.toString().trim().split(",");
 
-        tblView.setItems(xx);
+            ObservableList<student_data> xx = FXCollections.observableArrayList();
+            xx = db.studentInterface(csv[0],csv[1]);
+
+            tblView.setItems(xx);
+        }
+
+
     }
 
 
     public void onLogoutClicked(ActionEvent event) {
     }
+
+
 
 
 }

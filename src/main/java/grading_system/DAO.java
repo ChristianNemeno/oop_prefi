@@ -15,12 +15,10 @@ public class DAO {
 
 
     public int authenticate(String user, String password){
-        boolean val = false;
         int id = -1;
-
         try(Connection conn = DriverManager.getConnection(URL,USER, PASSWORD);
             PreparedStatement statement = conn.prepareStatement(
-                    "SELECT id,COUNT(*) FROM user WHERE username =? AND password =?"
+                    "SELECT id FROM user WHERE username =? AND password =?"
             );
         ){
 
@@ -30,19 +28,44 @@ public class DAO {
             ResultSet rs = statement.executeQuery();
 
             if(rs.next()){
-                int count = rs.getInt(2);
-                if(count > 0){
-                     id = rs.getInt("id");
-                }
+                id = rs.getInt("id");
 
             }
-            System.out.println("sad");
 
         }catch (SQLException e){
             System.err.println(e);
         }
 
         return id;
+    }
+
+    public user_data getter(int id){
+
+        user_data usd = null;
+        try(Connection conn = DriverManager.getConnection(URL,USER, PASSWORD);
+            PreparedStatement statement = conn.prepareStatement(
+                    "SELECT firstname, lastname FROM user WHERE id = ?"
+            );
+        ){
+
+            statement.setInt(1,id);
+
+
+            ResultSet rs = statement.executeQuery();
+
+            if(rs.next()){
+                usd = new user_data(
+                        rs.getString("firstname"),
+                        rs.getString("lastname")
+                        );
+
+            }
+
+        }catch (SQLException e){
+            System.err.println(e);
+        }
+
+        return usd;
     }
 
     public ObservableList<student_data> studentInterface(String lastName, String firstName){
@@ -66,7 +89,7 @@ public class DAO {
             while(resultSet.next()){
                 String c_code = resultSet.getString("coursecode");
                 String c_name = resultSet.getString("coursename");
-                double grade = resultSet.getInt("grade ");
+                double grade = resultSet.getDouble("grade");
                 studs.add(new student_data(c_code,c_name,grade));
             }
 
